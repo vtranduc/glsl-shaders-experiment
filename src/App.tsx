@@ -1,25 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useMemo, useEffect } from "react";
+import { CanvasManager } from "./utils";
+import { Chapter1 } from "./chapters";
+import { useKey } from "./customHooks";
 
 function App() {
+  const canvasManager = useMemo(() => new CanvasManager(), []);
+  const canvasContainer = useRef<HTMLDivElement>(null);
+
+  const keyPress = useKey();
+
+  useEffect(() => {
+    const div = canvasContainer.current;
+    if (!div) return;
+    canvasManager.appendToDiv(div);
+    const onResize = () => canvasManager.fitToDiv();
+    window.addEventListener("resize", onResize);
+    return () => {
+      canvasManager.clear();
+      canvasManager.removeFromDiv();
+      window.removeEventListener("resize", onResize);
+    };
+  }, [canvasManager]);
+
+  const chapter1 = useMemo(() => new Chapter1(), []);
+
+  useEffect(() => {
+    canvasManager.add(chapter1.scene);
+    return () => {
+      canvasManager.remove(chapter1.scene);
+    };
+  }, [chapter1, canvasManager]);
+
+  useEffect(() => {
+    chapter1.onKeyPress(keyPress);
+  }, [keyPress, chapter1]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div
+      style={{
+        width: "95vw",
+        height: "95vh",
+        border: "solid 5px red",
+      }}
+      ref={canvasContainer}
+    />
   );
 }
 
