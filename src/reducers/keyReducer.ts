@@ -1,24 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Key, KeyPress } from "../types";
+import { Key, KeyState, Arrow, Special, Press } from "../types";
 import { mapRecord } from "../utils";
 
-const initialState: KeyPress = {
-  key: mapRecord(Object.values(Key), false),
-};
+const presses = (Object.values(Key) as Press[])
+  .concat(Object.values(Arrow))
+  .concat(Object.values(Special));
+
+const initialState: KeyState = mapRecord(presses, false);
 
 const keySlice = createSlice({
   name: "key",
   initialState,
   reducers: {
-    pressKey(state, { payload }: PayloadAction<Key>) {
-      state.key[payload] = true;
+    press(state, { payload }: PayloadAction<Press>) {
+      state[payload] = true;
     },
-    releaseKey(state, { payload }: PayloadAction<Key>) {
-      state.key[payload] = false;
+    release(state, { payload }: PayloadAction<Press>) {
+      state[payload] = false;
     },
   },
 });
 
-export const { pressKey, releaseKey } = keySlice.actions;
+export const { press, release } = keySlice.actions;
 
 export default keySlice.reducer;

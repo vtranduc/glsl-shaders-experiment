@@ -1,5 +1,7 @@
 export interface RootState {
-  key: KeyPress;
+  key: KeyState;
+  canvas: CanvasState;
+  chapter: ChapterState;
 }
 
 export enum Key {
@@ -13,6 +15,32 @@ export enum Key {
   R = "KeyR",
 }
 
-export interface KeyPress {
-  key: Record<Key, boolean>;
+export enum Arrow {
+  Up = "ArrowUp",
+  Down = "ArrowDown",
+  Left = "ArrowLeft",
+  Right = "ArrowRight",
+}
+
+export enum Special {
+  Space = "Space",
+  Enter = "Enter",
+}
+
+export type Press = Key | Arrow | Special;
+
+export type KeyState = Record<Press, boolean>;
+
+export interface CanvasState {}
+
+export interface ChapterState {
+  chapter: Chapter;
+}
+
+export type Chapter = 1 | 2;
+
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
 }
