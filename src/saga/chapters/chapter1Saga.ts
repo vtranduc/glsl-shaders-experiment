@@ -8,10 +8,10 @@ import { Arrow, Press, Special } from "../../types";
 export function* chapter1Saga(controller: CanvasManager) {
   const chapter1 = new Chapter1();
   controller.add(chapter1.scene);
-  yield all([takeEvery(press.type, changeSizeSaga(chapter1))]);
+  yield all([takeEvery(press.type, chapter1CommandsSaga(chapter1))]);
 }
 
-function changeSizeSaga(chapter1: Chapter1) {
+function chapter1CommandsSaga(chapter1: Chapter1) {
   return ({ payload }: PayloadAction<Press>) => {
     switch (payload) {
       case Arrow.Up:

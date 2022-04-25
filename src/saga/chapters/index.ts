@@ -26,7 +26,7 @@ function getChapterSaga(controller: CanvasManager) {
         yield chapter1Saga(controller);
         break;
       case 2:
-        chapter2Saga();
+        yield chapter2Saga(controller);
         break;
       default:
     }
