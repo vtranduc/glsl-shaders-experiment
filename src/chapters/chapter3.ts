@@ -2,10 +2,8 @@ import * as THREE from "three";
 
 export class Chapter3 {
   private dimensions = { height: 2, width: 2, top: 3, left: -2 };
-  private color = new THREE.Color().setRGB(0, 0, 0);
   private mat = new THREE.ShaderMaterial({
     uniforms: {
-      u_color: { value: this.color },
       u_resolution: {
         value: { x: this.dimensions.width, y: this.dimensions.height },
       },
@@ -17,7 +15,6 @@ export class Chapter3 {
       },
     },
     fragmentShader: `
-    // uniform vec3 u_color;
     uniform vec2 u_resolution;
     uniform vec2 u_position;
     uniform vec2 u_mouse;

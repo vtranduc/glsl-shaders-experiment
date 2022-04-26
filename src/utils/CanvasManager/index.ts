@@ -3,6 +3,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Preset, StandardPreset } from "./presets";
 import { ElementDimensions, MousePosition } from "../../types";
 
+interface RequestedAnimation {
+  id: number;
+  animation: (timestamp?: number) => void;
+}
+
 export class CanvasManager {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(
@@ -14,6 +19,8 @@ export class CanvasManager {
   private renderer = new THREE.WebGLRenderer();
   private controls = new OrbitControls(this.camera, this.renderer.domElement);
   private preset: Preset;
+  private requestedAnimations: RequestedAnimation[] = [];
+  private animationId = 0;
   private div: HTMLDivElement | null = null;
   private raycaster = new THREE.Raycaster();
   private utils = {
@@ -32,9 +39,12 @@ export class CanvasManager {
     this.animate();
   }
 
-  private animate() {
+  private animate(timestamp = 0) {
     requestAnimationFrame(this.animate);
     this.preset.animate();
+    this.requestedAnimations.forEach((animation) =>
+      animation.animation(timestamp)
+    );
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
   }
@@ -79,6 +89,7 @@ export class CanvasManager {
     this.scene.children
       .filter((object) => !this.isPreset(object))
       .forEach((object) => this.remove(object));
+    this.clearAnimations();
   }
 
   public get dimensions(): ElementDimensions | null {
@@ -98,5 +109,21 @@ export class CanvasManager {
       this.camera
     );
     return this.raycaster.intersectObject(object);
+  }
+
+  public requestAnimation(animation: (timestamp?: number) => void) {
+    this.animationId++;
+    this.requestedAnimations.push({ id: this.animationId, animation });
+    return this.animationId;
+  }
+
+  public cancelAnimation(id: number) {
+    this.requestedAnimations = this.requestedAnimations.filter(
+      (animation) => animation.id !== id
+    );
+  }
+
+  public clearAnimations() {
+    this.requestedAnimations = [];
   }
 }
