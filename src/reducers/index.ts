@@ -7,11 +7,13 @@ import canvasReducer, {
   clear,
 } from "./canvasReducer";
 import chapterReducer, { goToChapter } from "./chapterReducer";
+import mouseReducer, { updateMousePosition } from "./mouseReducer";
 
 export default combineReducers({
   key: keyReducer,
   canvas: canvasReducer,
   chapter: chapterReducer,
+  mouse: mouseReducer,
 });
 
 export {
@@ -22,4 +24,5 @@ export {
   fitToDiv,
   clear,
   goToChapter,
+  updateMousePosition,
 };

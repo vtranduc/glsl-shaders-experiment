@@ -28,7 +28,7 @@ export class StandardPreset implements Preset {
   }
 
   private addGrid() {
-    const grid = new THREE.GridHelper(50, 50);
+    const grid = new THREE.GridHelper(20, 20);
     this.set.add(grid);
   }
 

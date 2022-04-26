@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CanvasState } from "../types";
+import { CanvasState, ElementDimensions } from "../types";
 
-const initialState: CanvasState = {};
+const initialState: CanvasState = {
+  dimensions: null,
+};
 
 const canvasSlice = createSlice({
   name: "canvas",
@@ -14,10 +16,22 @@ const canvasSlice = createSlice({
     fitToDiv() {},
 
     clear() {},
+
+    setCanvasDimensions(
+      state,
+      { payload }: PayloadAction<ElementDimensions | null>
+    ) {
+      state.dimensions = payload;
+    },
   },
 });
 
-export const { appendToDiv, removeFromDiv, clear, fitToDiv } =
-  canvasSlice.actions;
+export const {
+  appendToDiv,
+  removeFromDiv,
+  clear,
+  fitToDiv,
+  setCanvasDimensions,
+} = canvasSlice.actions;
 
 export default canvasSlice.reducer;

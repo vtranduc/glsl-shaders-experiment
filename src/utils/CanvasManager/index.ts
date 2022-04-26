@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Preset, StandardPreset } from "./presets";
+import { ElementDimensions, MousePosition } from "../../types";
 
 export class CanvasManager {
   private scene = new THREE.Scene();
@@ -14,6 +15,10 @@ export class CanvasManager {
   private controls = new OrbitControls(this.camera, this.renderer.domElement);
   private preset: Preset;
   private div: HTMLDivElement | null = null;
+  private raycaster = new THREE.Raycaster();
+  private utils = {
+    vector2: new THREE.Vector2(),
+  };
 
   constructor() {
     this.preset = new StandardPreset();
@@ -59,6 +64,7 @@ export class CanvasManager {
     const aspect = width / height;
     this.renderer.setSize(width, height);
     this.camera.aspect = aspect;
+    this.camera.updateProjectionMatrix();
   }
 
   public add(object: THREE.Object3D) {
@@ -73,5 +79,24 @@ export class CanvasManager {
     this.scene.children
       .filter((object) => !this.isPreset(object))
       .forEach((object) => this.remove(object));
+  }
+
+  public get dimensions(): ElementDimensions | null {
+    return (
+      this.div && {
+        top: this.renderer.domElement.offsetTop,
+        left: this.renderer.domElement.offsetLeft,
+        width: this.renderer.domElement.clientWidth,
+        height: this.renderer.domElement.clientHeight,
+      }
+    );
+  }
+
+  public intersectObject(object: THREE.Object3D, mouse: MousePosition) {
+    this.raycaster.setFromCamera(
+      this.utils.vector2.fromArray(mouse),
+      this.camera
+    );
+    return this.raycaster.intersectObject(object);
   }
 }
