@@ -6,10 +6,10 @@ enum FragmentShaderGradientType {
 }
 
 export class Chapter6 {
-  private gradient = FragmentShaderGradientType.UV;
-  private size_ = 20;
-  private geo = new THREE.PlaneGeometry(this.size_, this.size_);
+  private gradient = FragmentShaderGradientType.Position;
+  private geo = new THREE.PlaneGeometry(2, 2);
   private mat = new THREE.ShaderMaterial({
+    uniforms: { u_size: { value: 1 } },
     vertexShader: `
         varying vec2 v_uv;
         varying vec3 v_position;
@@ -25,6 +25,7 @@ export class Chapter6 {
   private mesh = new THREE.Mesh(this.geo, this.mat);
 
   constructor() {
+    this.mat.uniforms.u_size.value = this.actualSize;
     this.updateFragmentShader();
   }
 
@@ -39,32 +40,45 @@ export class Chapter6 {
   private updateFragmentShader() {
     const varyingVariable =
       this.gradient === FragmentShaderGradientType.Position
-        ? "v_position"
-        : "v_uv";
+        ? `
+            varying vec3 v_position;
+            uniform float u_size;
+        `
+        : "varying vec2 v_uv;";
+    const fragColorAssignment =
+      this.gradient === FragmentShaderGradientType.UV
+        ? "gl_FragColor = vec4(u_uv.x, u_uv.y, 0.0, 1.0);"
+        : `
+            float halfSize = u_size / 2.0;
+            vec3 color = vec3(0.0);
+            color.r = clamp(v_position.x / halfSize, 0.0, 1.0);
+            color.g = clamp(v_position.y / halfSize, 0.0, 1.0);
+            gl_FragColor = vec4(color, 1.0);
+        `;
     this.mat.fragmentShader = `
-        varying vec2 v_uv;
-        varying vec3 v_position;
-
+        ${varyingVariable}
         void main() {
-            gl_FragColor = vec4(${varyingVariable}.x,
-                ${varyingVariable}.y, 0.0, 1.0);
+            ${fragColorAssignment}
         }
     `;
     this.mat.needsUpdate = true;
   }
 
   public get size() {
-    return this.size_;
+    return this.mat.uniforms.u_size.value;
   }
 
   public set size(val: number) {
     if (val < 1) return;
-    this.geo.computeBoundingBox();
-    const realSize = this.geo.boundingBox!.max.x - this.geo.boundingBox!.min.x;
-    const scale = val / realSize;
+    const scale = val / this.actualSize;
     if (scale === 1) return;
-    this.size_ = val;
     this.geo.scale(scale, scale, 0);
+    this.mat.uniforms.u_size.value = val;
+  }
+
+  private get actualSize() {
+    this.geo.computeBoundingBox();
+    return this.geo.boundingBox!.max.x - this.geo.boundingBox!.min.x;
   }
 
   public get scene() {
