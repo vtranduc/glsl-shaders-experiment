@@ -18,8 +18,7 @@ export function* chapter3Saga(controller: CanvasManager) {
 
 function chapter3CommandsSaga(chapter3: Chapter3, controller: CanvasManager) {
   return function ({ payload }: PayloadAction<MousePosition>) {
-    const intersect = controller.intersectObject(chapter3.scene, payload)[0];
-    if (!intersect) return;
-    chapter3.changeColorByIntersection(intersect.point);
+    const intersect = controller.intersectObject(chapter3.scene, payload);
+    if (intersect) chapter3.changeColorByIntersection(intersect.point);
   };
 }

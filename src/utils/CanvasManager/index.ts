@@ -103,12 +103,15 @@ export class CanvasManager {
     );
   }
 
-  public intersectObject(object: THREE.Object3D, mouse: MousePosition) {
+  public intersectObject(
+    object: THREE.Object3D,
+    mouse: MousePosition
+  ): THREE.Intersection<THREE.Object3D<THREE.Event>> | null {
     this.raycaster.setFromCamera(
       this.utils.vector2.fromArray(mouse),
       this.camera
     );
-    return this.raycaster.intersectObject(object);
+    return this.raycaster.intersectObject(object)[0] || null;
   }
 
   public requestAnimation(animation: (timestamp?: number) => void) {
