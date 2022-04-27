@@ -40,7 +40,7 @@ export interface ChapterState {
   chapter: Chapter;
 }
 
-export type Chapter = 1 | 2 | 3 | 4;
+export type Chapter = 1 | 2 | 3 | 4 | 5;
 
 export interface RGB {
   r: number;
@@ -60,3 +60,8 @@ export interface MouseState {
 }
 
 export type MousePosition = [number, number];
+
+export type XY = {
+  x: number;
+  y: number;
+};

@@ -1,5 +1,5 @@
 import { CanvasManager } from "../../utils";
-import { Chapter4 } from "../../chapters/chapter4";
+import { Chapter4 } from "../../chapters";
 
 export function chapter4Saga(controller: CanvasManager) {
   const chapter4 = new Chapter4();
