@@ -40,7 +40,7 @@ export interface ChapterState {
   chapter: Chapter;
 }
 
-export type Chapter = 1 | 2 | 3 | 4 | 5;
+export type Chapter = 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface RGB {
   r: number;
