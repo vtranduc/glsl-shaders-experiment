@@ -30,6 +30,8 @@ export enum Arrow {
 export enum Special {
   Space = "Space",
   Enter = "Enter",
+  ControlRight = "ControlRight",
+  ControlLeft = "ControlLeft",
 }
 
 export type Press = Key | Arrow | Special;
@@ -44,7 +46,7 @@ export interface ChapterState {
   chapter: Chapter;
 }
 
-export type Chapter = 1 | 2 | 3 | 4 | 5 | 6;
+export type Chapter = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export interface RGB {
   r: number;
