@@ -18,6 +18,7 @@ export enum Key {
   D = "KeyD",
   S = "KeyS",
   A = "KeyA",
+  M = "KeyM",
 }
 
 export enum Arrow {

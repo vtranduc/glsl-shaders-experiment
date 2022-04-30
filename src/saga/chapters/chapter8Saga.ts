@@ -8,6 +8,7 @@ import { press } from "../../reducers";
 export function* chapter8Saga(controller: CanvasManager) {
   const chapter8 = new Chapter8();
   controller.add(chapter8.scene);
+  controller.requestAnimation(chapter8.updateOnAnimationFrame);
   yield takeEvery(press.type, chapter8CommandsSaga(chapter8));
 }
 
@@ -26,9 +27,6 @@ function chapter8CommandsSaga(chapter8: Chapter8) {
       case Arrow.Left:
         chapter8.xSize -= 0.1;
         break;
-      case Special.Space:
-        chapter8.switch();
-        break;
       case Key.D:
         chapter8.x += 0.1;
         break;
@@ -40,6 +38,15 @@ function chapter8CommandsSaga(chapter8: Chapter8) {
         break;
       case Key.S:
         chapter8.y -= 0.1;
+        break;
+      case Special.Space:
+        chapter8.switch();
+        break;
+      case Special.Enter:
+        chapter8.rotate = !chapter8.rotate;
+        break;
+      case Key.M:
+        chapter8.switchRotateMode();
         break;
       default:
     }

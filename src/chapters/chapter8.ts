@@ -4,13 +4,18 @@ type RectangleIdentifier = 0 | 1 | 2;
 
 export class Chapter8 {
   private rect: RectangleIdentifier = 0;
+  private clock = new THREE.Clock(false);
   private geo = new THREE.PlaneGeometry(20, 20);
   private mat = new THREE.ShaderMaterial({
     uniforms: {
+      u_rotate: { value: false },
+      u_rotationMode: { value: 0 },
+      u_anchor: { value: { x: 2, y: 0 } },
+      u_time: { value: 0 },
       u_size1: { value: { x: 0.5, y: 0.8 } },
-      u_center1: { value: { x: 0, y: 0.5 } },
+      u_center1: { value: { x: 0.5, y: 0.5 } },
       u_size2: { value: { x: 1, y: 0.8 } },
-      u_center2: { value: { x: -0.5, y: 0 } },
+      u_center2: { value: { x: 0, y: 0 } },
       u_size3: { value: { x: 1, y: 0.8 } },
       u_center3: { value: { x: 3, y: 0 } },
     },
@@ -30,23 +35,75 @@ export class Chapter8 {
         uniform vec2 u_center2;
         uniform vec2 u_size3;
         uniform vec2 u_center3;
+        uniform float u_time;
+        uniform bool u_rotate;
+        uniform int u_rotationMode;
+        uniform vec2 u_anchor;
 
         float isRect(vec2 position, vec2 size, vec2 center) {
             vec2 halfSize = size / 2.0;
             vec2 isInside = step(center - halfSize, position)
                 - step(center + halfSize, position);
-            return isInside.x * isInside.y;
+          return isInside.x * isInside.y;
+        }
+
+        mat2 getRotationMat(float theta) {
+          float s = sin(theta);
+          float c = cos(theta);
+          return mat2(c, s, -s, c);
+        }
+
+        mat3 getRotationMat(float theta, vec2 translate) {
+          float s = sin(theta);
+          float c = cos(theta);
+
+          float x = translate.x;
+          float y = translate.y;
+
+          return mat3(
+            c, s, 0,
+            -s, c, 0,
+            x - c * x + s * y, y - s * x - c * y, 1
+          );
         }
 
         void main() {
-            float r = isRect(v_position.xy, u_size1, u_center1);
-            float g = isRect(v_position.xy, u_size2, u_center2);
-            float b = isRect(v_position.xy, u_size3, u_center3);
-            gl_FragColor = vec4(r, g, b, 1.0);
+
+          vec2 positions[3];
+          vec2 centers[3] = vec2[](u_center1, u_center2, u_center3);
+          vec2 sizes[3] = vec2[](u_size1, u_size2, u_size3);
+
+          if (u_rotate) {
+          
+            switch(u_rotationMode) {
+              case 0:
+                vec2 adjustment = vec2(cos(u_time), sin(u_time));
+                for (int i = 0; i < 3; i++) positions[i] = v_position.xy + adjustment;
+                break;
+              case 1:
+                for (int i = 0; i < 3; i++) positions[i] = getRotationMat(u_time) * v_position.xy;
+                break;
+              case 2:
+                for (int i = 0; i < 3; i++) positions[i] = 
+                  (getRotationMat(u_time, u_anchor) * vec3(v_position.xy, 1.0)).xy;
+                break;
+              default:
+                break;
+            }
+          } else for (int i = 0; i < 3; i++) positions[i] = v_position.xy;
+
+          vec3 rgb;
+          for (int i = 0; i < 3; i++) rgb[i] = isRect(positions[i], sizes[i], centers[i]);
+
+          gl_FragColor = vec4(rgb, 1.0);
         }
     `,
   });
   private mesh = new THREE.Mesh(this.geo, this.mat);
+
+  constructor() {
+    this.updateOnAnimationFrame = this.updateOnAnimationFrame.bind(this);
+  }
 
   public get x() {
     return this.uniformsPosition.x;
@@ -108,6 +165,34 @@ export class Chapter8 {
 
   public switch() {
     this.rect = (++this.rect % 3) as RectangleIdentifier;
+  }
+
+  public get rotate() {
+    return this.mat.uniforms.u_rotate.value;
+  }
+
+  public set rotate(rotate: boolean) {
+    if (rotate === this.rotate) return;
+    if (rotate) this.clock.start();
+    else this.clock.stop();
+    this.mat.uniforms.u_rotate.value = rotate;
+  }
+
+  public switchRotateMode() {
+    this.rotateMode = ((this.rotateMode + 1) % 3) as 0 | 1 | 2;
+  }
+
+  private get rotateMode() {
+    return this.mat.uniforms.u_rotationMode.value;
+  }
+
+  private set rotateMode(mode: 0 | 1 | 2) {
+    this.mat.uniforms.u_rotationMode.value = mode;
+  }
+
+  public updateOnAnimationFrame() {
+    if (this.rotate)
+      this.mat.uniforms.u_time.value = this.clock.getElapsedTime();
   }
 
   public get scene() {
