@@ -67,25 +67,34 @@ export class Chapter8 {
           );
         }
 
+        bool inCircle(vec2 point, vec2 center, float radius) {
+          return length(point - center) <= radius;
+        }
+
         void main() {
+          if (inCircle(v_position.xy, u_anchor, 0.2)) {
+            gl_FragColor = vec4(1.0);
+            return;
+          }
 
           vec2 positions[3];
           vec2 centers[3] = vec2[](u_center1, u_center2, u_center3);
           vec2 sizes[3] = vec2[](u_size1, u_size2, u_size3);
+          float theta = -u_time;
 
           if (u_rotate) {
           
             switch(u_rotationMode) {
               case 0:
-                vec2 adjustment = vec2(cos(u_time), sin(u_time));
+                vec2 adjustment = vec2(cos(theta), sin(theta));
                 for (int i = 0; i < 3; i++) positions[i] = v_position.xy + adjustment;
                 break;
               case 1:
-                for (int i = 0; i < 3; i++) positions[i] = getRotationMat(u_time) * v_position.xy;
+                for (int i = 0; i < 3; i++) positions[i] = getRotationMat(theta) * v_position.xy;
                 break;
               case 2:
                 for (int i = 0; i < 3; i++) positions[i] = 
-                  (getRotationMat(u_time, u_anchor) * vec3(v_position.xy, 1.0)).xy;
+                  (getRotationMat(theta, u_anchor) * vec3(v_position.xy, 1.0)).xy;
                 break;
               default:
                 break;
@@ -161,6 +170,22 @@ export class Chapter8 {
       default:
         return this.mat.uniforms.u_size1.value;
     }
+  }
+
+  public get xAnchor() {
+    return this.mat.uniforms.u_anchor.value.x;
+  }
+
+  public set xAnchor(val: number) {
+    this.mat.uniforms.u_anchor.value.x = val;
+  }
+
+  public get yAnchor() {
+    return this.mat.uniforms.u_anchor.value.y;
+  }
+
+  public set yAnchor(val: number) {
+    this.mat.uniforms.u_anchor.value.y = val;
   }
 
   public switch() {

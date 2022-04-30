@@ -21,6 +21,19 @@ export enum Key {
   M = "KeyM",
 }
 
+export enum Numpad {
+  Numpad0 = "Numpad0",
+  Numpad1 = "Numpad1",
+  Numpad2 = "Numpad2",
+  Numpad3 = "Numpad3",
+  Numpad4 = "Numpad4",
+  Numpad5 = "Numpad5",
+  Numpad6 = "Numpad6",
+  Numpad7 = "Numpad7",
+  Numpad8 = "Numpad8",
+  Numpad9 = "Numpad9",
+}
+
 export enum Arrow {
   Up = "ArrowUp",
   Down = "ArrowDown",
@@ -35,7 +48,12 @@ export enum Special {
   ControlLeft = "ControlLeft",
 }
 
-export type Press = Key | Arrow | Special;
+export type Press = Key | Arrow | Special | Numpad;
+
+export const presses = (Object.values(Key) as Press[])
+  .concat(Object.values(Arrow))
+  .concat(Object.values(Special))
+  .concat(Object.values(Numpad));
 
 export type KeyState = Record<Press, boolean>;
 

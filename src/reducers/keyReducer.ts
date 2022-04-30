@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Key, KeyState, Arrow, Special, Press } from "../types";
+import { KeyState, Press, presses } from "../types";
 import { mapRecord } from "../utils";
-
-const presses = (Object.values(Key) as Press[])
-  .concat(Object.values(Arrow))
-  .concat(Object.values(Special));
 
 const initialState: KeyState = mapRecord(presses, false);
 

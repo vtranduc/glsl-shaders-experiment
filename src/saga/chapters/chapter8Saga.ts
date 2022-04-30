@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { CanvasManager } from "../../utils";
 import { Chapter8 } from "../../chapters";
-import { Press, Arrow, Special, Key } from "../../types";
+import { Press, Arrow, Special, Key, Numpad } from "../../types";
 import { takeEvery } from "redux-saga/effects";
 import { press } from "../../reducers";
 
@@ -47,6 +47,18 @@ function chapter8CommandsSaga(chapter8: Chapter8) {
         break;
       case Key.M:
         chapter8.switchRotateMode();
+        break;
+      case Numpad.Numpad8:
+        chapter8.yAnchor += 0.1;
+        break;
+      case Numpad.Numpad2:
+        chapter8.yAnchor -= 0.1;
+        break;
+      case Numpad.Numpad6:
+        chapter8.xAnchor += 0.1;
+        break;
+      case Numpad.Numpad4:
+        chapter8.xAnchor -= 0.1;
         break;
       default:
     }
