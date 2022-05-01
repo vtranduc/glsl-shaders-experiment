@@ -12,6 +12,7 @@ import { chapter7Saga } from "./chapter7Saga";
 import { chapter8Saga } from "./chapter8Saga";
 import { chapter9Saga } from "./chapter9Saga";
 import { chapter10Saga } from "./chapter10Saga";
+import { chapter11Saga } from "./chapter11Saga";
 
 export function* chapterSaga(controller: CanvasManager) {
   yield takeLatest(goToChapter.type, getChapterSaga(controller));
@@ -59,6 +60,9 @@ function getChapterSaga(controller: CanvasManager) {
         break;
       case 10:
         yield chapter10Saga(controller);
+        break;
+      case 11:
+        yield chapter11Saga(controller);
         break;
       default:
     }
