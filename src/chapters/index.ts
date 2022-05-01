@@ -6,3 +6,4 @@ export * from "./chapter5";
 export * from "./chapter6";
 export * from "./chapter7";
 export * from "./chapter8";
+export * from "./chapter9";
