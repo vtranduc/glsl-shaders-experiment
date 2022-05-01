@@ -46,6 +46,12 @@ export enum Special {
   Enter = "Enter",
   ControlRight = "ControlRight",
   ControlLeft = "ControlLeft",
+  BracketRight = "BracketRight",
+  BracketLeft = "BracketLeft",
+  Quote = "Quote",
+  Semicolon = "Semicolon",
+  Slash = "Slash",
+  Period = "Period",
 }
 
 export type Press = Key | Arrow | Special | Numpad;
@@ -65,7 +71,7 @@ export interface ChapterState {
   chapter: Chapter;
 }
 
-export type Chapter = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type Chapter = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 export interface RGB {
   r: number;
