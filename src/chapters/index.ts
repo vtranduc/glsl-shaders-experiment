@@ -9,3 +9,4 @@ export * from "./chapter8";
 export * from "./chapter9";
 export * from "./chapter10";
 export * from "./chapter11";
+export * from "./chapter12";

@@ -35,18 +35,18 @@ export class Chapter9 {
         }
 
         mat3 getRotationMat(float theta, vec2 translate) {
-            float s = sin(theta);
-            float c = cos(theta);
-  
-            float x = translate.x;
-            float y = translate.y;
-  
-            return mat3(
-              c, s, 0,
-              -s, c, 0,
-              x - c * x + s * y, y - s * x - c * y, 1
-            );
-          }
+          float s = sin(theta);
+          float c = cos(theta);
+
+          float x = translate.x;
+          float y = translate.y;
+
+          return mat3(
+            c, s, 0,
+            -s, c, 0,
+            x - c * x + s * y, y - s * x - c * y, 1
+          );
+        }
 
         void main() {
             vec2 center = vec2(0.5, 0.5);
