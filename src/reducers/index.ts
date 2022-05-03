@@ -8,12 +8,18 @@ import canvasReducer, {
 } from "./canvasReducer";
 import chapterReducer, { goToChapter } from "./chapterReducer";
 import mouseReducer, { updateMousePosition } from "./mouseReducer";
+import dragAndDropReducer, {
+  enableDragAndDrop,
+  disableDragAndDrop,
+  dropFile,
+} from "./dragAndDropReducer";
 
 export default combineReducers({
   key: keyReducer,
   canvas: canvasReducer,
   chapter: chapterReducer,
   mouse: mouseReducer,
+  dragAndDrop: dragAndDropReducer,
 });
 
 export {
@@ -25,4 +31,7 @@ export {
   clear,
   goToChapter,
   updateMousePosition,
+  enableDragAndDrop,
+  disableDragAndDrop,
+  dropFile,
 };

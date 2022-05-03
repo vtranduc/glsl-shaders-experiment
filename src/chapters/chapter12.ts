@@ -151,6 +151,13 @@ export class Chapter12 {
     this.mat.needsUpdate = true;
   }
 
+  public set image(blob: string) {
+    this.loader.load(
+      blob,
+      (texture) => (this.mat.uniforms.u_texture.value = texture)
+    );
+  }
+
   public get scene() {
     return this.mesh;
   }

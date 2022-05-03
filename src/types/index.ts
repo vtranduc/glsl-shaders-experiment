@@ -1,8 +1,11 @@
+import { CSSProperties } from "react";
+
 export interface RootState {
   key: KeyState;
   canvas: CanvasState;
   chapter: ChapterState;
   mouse: MouseState;
+  dragAndDrop: DragAndDropState;
 }
 
 export enum Key {
@@ -90,9 +93,35 @@ export interface MouseState {
   position: MousePosition;
 }
 
+export enum ImageEXT {
+  JPG = "jpg",
+  PNG = "png",
+  JPEG = "jpeg",
+  WEBP = "webp",
+}
+
+export type EXT = ImageEXT;
+
+export interface FileData {
+  blob: string;
+  ext: ImageEXT;
+}
+
+export interface DragAndDropState {
+  enabled: boolean;
+  files: FileData[];
+}
+
 export type MousePosition = [number, number];
 
 export type XY = {
   x: number;
   y: number;
 };
+
+type Children = React.ReactChild | React.ReactChild[] | null;
+
+export interface ContainerProps {
+  children?: Children;
+  style?: CSSProperties;
+}
