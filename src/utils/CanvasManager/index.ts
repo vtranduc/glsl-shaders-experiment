@@ -31,7 +31,7 @@ export class CanvasManager {
     this.preset = new StandardPreset();
     this.designateIsPreset(this.preset.preset);
     this.scene.add(this.preset.preset);
-    this.camera.position.set(0, 5, 5);
+    this.resetCamera();
     this.renderer.setClearColor(0xf0f5f5);
     this.renderer.shadowMap.enabled = true;
     this.controls.update();
@@ -90,6 +90,7 @@ export class CanvasManager {
       .filter((object) => !this.isPreset(object))
       .forEach((object) => this.remove(object));
     this.clearAnimations();
+    this.resetCamera();
   }
 
   public get dimensions(): ElementDimensions | null {
@@ -128,5 +129,18 @@ export class CanvasManager {
 
   public clearAnimations() {
     this.requestedAnimations = [];
+  }
+
+  private resetCamera() {
+    this.setCameraPosition(0, 5, 5);
+    this.lookAt(0, 0, 0);
+  }
+
+  public setCameraPosition(x: number, y: number, z: number) {
+    this.camera.position.set(x, y, z);
+  }
+
+  public lookAt(x: number, y: number, z: number) {
+    this.camera.lookAt(x, y, z);
   }
 }
