@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Chapter12 } from "../../chapters";
 import { CanvasManager } from "../../utils";
-import { Press, Arrow, Key } from "../../types";
+import { Press, Arrow, Key, Special } from "../../types";
 import { takeEvery } from "redux-saga/effects";
 import { press } from "../../reducers";
 
@@ -32,7 +32,17 @@ function chapter12CommandsSaga(chapter12: Chapter12) {
       case Key.S:
         chapter12.yFlip = !chapter12.yFlip;
         break;
+      case Special.Space:
+        chapter12.rgb = getRandomRGB() + getRandomRGB() + getRandomRGB();
+        break;
+      case Special.Enter:
+        chapter12.rgb = "rgb";
+        break;
       default:
     }
   };
+}
+
+function getRandomRGB() {
+  return ["r", "g", "b"][Math.floor(Math.random() * 3)];
 }

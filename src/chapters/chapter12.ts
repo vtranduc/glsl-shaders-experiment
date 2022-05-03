@@ -27,7 +27,23 @@ export class Chapter12 {
               * vec4(position, 1.0);
       }
     `,
-    fragmentShader: `
+    fragmentShader: this.getFragmentShader(),
+  });
+
+  constructor() {
+    this.loader.load("piqturdrophere.jpg", (texture) => {
+      this.defaultMat.map = this.crop(texture);
+      this.defaultMat.needsUpdate = true;
+    });
+
+    this.loader.load(
+      "tkg9ixbB9FxPyw.jpg",
+      (texture) => (this.texture = this.crop(texture))
+    );
+  }
+
+  private getFragmentShader(rgb = "rgb") {
+    return `
       #define Pi 3.1415926535897932384626433832795
       uniform sampler2D u_texture;
       uniform vec2 u_uvScale;
@@ -75,22 +91,10 @@ export class Chapter12 {
         vec3 color = inRect(v_uv, vec2(1., 1.), vec2(0.5, 0.5), theta) * texture2D(
           u_texture,
           mappedUV
-        ).rgb;
+        ).${rgb};
         gl_FragColor = vec4(color, 1.0);
       }
-    `,
-  });
-
-  constructor() {
-    this.loader.load("piqturdrophere.jpg", (texture) => {
-      this.defaultMat.map = this.crop(texture);
-      this.defaultMat.needsUpdate = true;
-    });
-
-    this.loader.load(
-      "tkg9ixbB9FxPyw.jpg",
-      (texture) => (this.texture = this.crop(texture))
-    );
+    `;
   }
 
   private crop(texture: THREE.Texture) {
@@ -137,6 +141,14 @@ export class Chapter12 {
 
   public set yFlip(flip: boolean) {
     this.mat.uniforms.u_flip.value.y = flip ? -1 : 1;
+  }
+
+  public set rgb(rgb: string) {
+    if (rgb.length !== 3) return;
+    if (rgb.split("").some((character) => !["r", "g", "b"].includes(character)))
+      return;
+    this.mat.fragmentShader = this.getFragmentShader(rgb);
+    this.mat.needsUpdate = true;
   }
 
   public get scene() {
