@@ -29,7 +29,7 @@ export function useCavasManager() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(goToChapter(14));
+    dispatch(goToChapter(15));
   }, [dispatch]);
 
   return containerId;
