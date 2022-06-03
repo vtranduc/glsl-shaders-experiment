@@ -7,6 +7,7 @@ import {
   fitToDiv,
   goToChapter,
 } from "../reducers";
+import { chapters } from "../types";
 
 export function useCavasManager() {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ export function useCavasManager() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(goToChapter(15));
+    dispatch(goToChapter(chapters[chapters.length - 1]));
   }, [dispatch]);
 
   return containerId;

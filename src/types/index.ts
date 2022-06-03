@@ -57,12 +57,18 @@ export enum Special {
   Period = "Period",
 }
 
-export type Press = Key | Arrow | Special | Numpad;
+export enum Page {
+  Up = "PageUp",
+  Down = "PageDown",
+}
+
+export type Press = Key | Arrow | Special | Numpad | Page;
 
 export const presses = (Object.values(Key) as Press[])
   .concat(Object.values(Arrow))
   .concat(Object.values(Special))
-  .concat(Object.values(Numpad));
+  .concat(Object.values(Numpad))
+  .concat(Object.values(Page));
 
 export type KeyState = Record<Press, boolean>;
 
@@ -89,7 +95,12 @@ export type Chapter =
   | 12
   | 13
   | 14
-  | 15;
+  | 15
+  | 16;
+
+export const chapters = Array.from(Array(16).keys()).map(
+  (key) => key + 1
+) as Chapter[];
 
 export interface RGB {
   r: number;
