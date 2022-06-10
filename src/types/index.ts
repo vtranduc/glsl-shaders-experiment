@@ -96,9 +96,10 @@ export type Chapter =
   | 13
   | 14
   | 15
-  | 16;
+  | 16
+  | 17;
 
-export const chapters = Array.from(Array(16).keys()).map(
+export const chapters = Array.from(Array(17).keys()).map(
   (key) => key + 1
 ) as Chapter[];
 

@@ -2,17 +2,25 @@ import * as THREE from "three";
 import vertexShaderMedia from "./vertexShader.glsl";
 import fragmentShaderMedia from "./fragmentShader.glsl";
 
-export class Chapter16 {
+export class Chapter17 {
+  private dimensions = { height: 2, width: 2 };
   private clock = new THREE.Clock();
   private geo = new THREE.PlaneGeometry(2, 2);
   private mat = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
     uniforms: {
       u_time: { value: this.clock.getElapsedTime() },
+      u_resolution: {
+        value: { x: this.dimensions.width, y: this.dimensions.height },
+      },
+      u_tex: {
+        value: new THREE.TextureLoader().load(
+          "https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/flame.png"
+        ),
+      },
     },
   });
   private mesh = new THREE.Mesh(this.geo, this.mat);
-  public animate = true;
 
   constructor() {
     this.updateOnAnimationFrame = this.updateOnAnimationFrame.bind(this);
@@ -31,8 +39,7 @@ export class Chapter16 {
   }
 
   public updateOnAnimationFrame() {
-    if (this.animate)
-      this.mat.uniforms.u_time.value = this.clock.getElapsedTime();
+    this.mat.uniforms.u_time.value = this.clock.getElapsedTime();
   }
 
   public get scene() {

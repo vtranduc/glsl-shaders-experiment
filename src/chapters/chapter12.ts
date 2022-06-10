@@ -37,7 +37,7 @@ export class Chapter12 {
     });
 
     this.loader.load(
-      "tkg9ixbB9FxPyw.jpg",
+      "logo512.png",
       (texture) => (this.texture = this.crop(texture))
     );
   }
