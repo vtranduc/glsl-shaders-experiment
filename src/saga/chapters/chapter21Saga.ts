@@ -20,7 +20,6 @@ class Chapter21 {
     const mat = new THREE.MeshPhongMaterial({
       color: 0x0000ff,
       shininess: 100,
-      side: THREE.DoubleSide,
     });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;

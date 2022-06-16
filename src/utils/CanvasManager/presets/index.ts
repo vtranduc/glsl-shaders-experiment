@@ -8,12 +8,19 @@ export abstract class Preset {
 export class StandardPreset implements Preset {
   private set = new THREE.Group();
   private orbitLight = this.getDirectionalLight();
+  private lightHelper = new THREE.DirectionalLightHelper(
+    this.orbitLight,
+    10,
+    0x000000
+  );
+
   private lightAngle = 0;
 
   constructor() {
     this.addGrid();
     this.addLight();
     this.set.add(this.orbitLight);
+    this.set.add(this.lightHelper);
     this.updateLightAngle();
   }
 
@@ -24,6 +31,7 @@ export class StandardPreset implements Preset {
   public get animate() {
     return () => {
       this.updateLightAngle();
+      this.lightHelper.update();
     };
   }
 
