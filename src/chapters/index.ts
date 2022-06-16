@@ -15,3 +15,6 @@ export * from "./chapter14";
 export * from "./chapter15";
 export * from "./chapter16";
 export * from "./chapter17";
+export * from "./chapter18";
+export * from "./chapter19";
+export * from "./chapter20";

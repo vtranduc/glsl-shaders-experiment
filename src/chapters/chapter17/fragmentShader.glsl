@@ -1,42 +1,50 @@
-uniform sampler2D u_tex;
+varying vec2 v_uv;
 uniform float u_time;
+uniform int u_layer;
 
-varying vec2 vUv;
+float random(vec2 xy) {
+    return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
 
-//Based on http://clockworkchilli.com/blog/8_a_fire_shader_in_glsl_for_your_webgl_games
+float noise (vec2 st) {
+  vec2 i = floor(st);
+  vec2 f = fract(st);
 
-void main (void)
-{
-  vec2 noise = vec2(0.0);
-  float time = u_time;
+  // Four corners in 2D of a tile
+  float a = random(i);
+  float b = random(i + vec2(1.0, 0.0));
+  float c = random(i + vec2(0.0, 1.0));
+  float d = random(i + vec2(1.0, 1.0));
 
-  // Generate noisy x value
-  vec2 uv = vec2(vUv.x*1.4 + 0.01, fract(vUv.y - time*0.69));
-  noise.x = (texture2D(u_tex, uv).w-0.5)*2.0;
-  uv = vec2(vUv.x*0.5 - 0.033, fract(vUv.y*2.0 - time*0.12));
-  noise.x += (texture2D(u_tex, uv).w-0.5)*2.0;
-  uv = vec2(vUv.x*0.94 + 0.02, fract(vUv.y*3.0 - time*0.61));
-  noise.x += (texture2D(u_tex, uv).w-0.5)*2.0;
+  // Smooth Interpolation
+
+  // Cubic Hermine Curve.  Same as SmoothStep()
+  vec2 u = f*f*(3.0-2.0*f);
+  // u = smoothstep(0.,1.,f);
+
+  // Mix 4 coorners percentages
+  return mix(a, b, u.x) +
+          (c - a)* u.y * (1.0 - u.x) +
+          (d - b) * u.x * u.y;
+}
+
+vec2 getPos(float x1, float x2, float y1, float y2) {
+  return vec2(v_uv.x * x1 + x2, v_uv.y * y1 - u_time * y2);
+}
+
+void main() {
+  float n = 0.0;
+
+  if (u_layer == 1) n += noise(getPos(1.4, 0.01, 1.0, 0.69) * 12.0);
+  else if (u_layer == 2) n += noise(getPos(0.5, - 0.033, 2.0, 0.12) * 8.0);
+  else if (u_layer == 3) n += noise(getPos(0.94, - 0.02, 3.0, 0.61) * 4.0);
+  else {
+    n += noise(getPos(1.4, 0.01, 1.0, 0.69) * 12.0);
+    n += noise(getPos(0.5, - 0.033, 2.0, 0.12) * 8.0);
+    n += noise(getPos(0.94, - 0.02, 3.0, 0.61) * 4.0);
+    n /= 3.0;
+  }
   
-  // Generate noisy y value
-  uv = vec2(vUv.x*0.7 - 0.01, fract(vUv.y - time*0.27));
-  noise.y = (texture2D(u_tex, uv).w-0.5)*2.0;
-  uv = vec2(vUv.x*0.45 + 0.033, fract(vUv.y*1.9 - time*0.61));
-  noise.y = (texture2D(u_tex, uv).w-0.5)*2.0;
-  uv = vec2(vUv.x*0.8 - 0.02, fract(vUv.y*2.5 - time*0.51));
-  noise.y += (texture2D(u_tex, uv).w-0.5)*2.0;
-  
-  noise = clamp(noise, -1.0, 1.0);
-
-  float perturb = (1.0 - vUv.y) * 0.35 + 0.02;
-  noise = (noise * perturb) + vUv - 0.02;
-
-  vec4 color = texture2D(u_tex, noise);
-  color = vec4(color.r*2.0, color.g*0.9, (color.g/color.r)*0.2, 1.0);
-  noise = clamp(noise, 0.05, 1.0);
-  color.a = texture2D(u_tex, noise).b*2.0;
-  color.a = color.a*texture2D(u_tex, vUv).b;
-
-  gl_FragColor = color;
-
+  vec3 color = mix(vec3(1.0, 0.0, 0.0), vec3(1.0, 1.0, 0.0), n);
+  gl_FragColor = vec4(color, 1.0);
 }

@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Preset, StandardPreset } from "./presets";
 import { ElementDimensions, MousePosition } from "../../types";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 
 interface RequestedAnimation {
   id: number;
@@ -91,6 +94,7 @@ export class CanvasManager {
       .forEach((object) => this.remove(object));
     this.clearAnimations();
     this.resetCamera();
+    this.scene.background = null;
   }
 
   public get dimensions(): ElementDimensions | null {
@@ -142,5 +146,91 @@ export class CanvasManager {
 
   public lookAt(x: number, y: number, z: number) {
     this.camera.lookAt(x, y, z);
+  }
+
+  public setBackground(background: THREE.CubeTexture) {
+    this.scene.background = background;
+  }
+
+  public blur() {
+    console.log("show this~");
+
+    const composer = new EffectComposer(this.renderer);
+
+    composer.addPass(new RenderPass(this.scene, this.camera));
+
+    const glslPass = new ShaderPass({
+      uniforms: {
+        tDiffuse: { value: null },
+        resolution: {
+          value: new THREE.Vector2(
+            window.innerWidth,
+            window.innerHeight
+          ).multiplyScalar(window.devicePixelRatio),
+        },
+        blurSize: { value: 20.0 },
+      },
+      vertexShader: `
+        varying vec2 v_uv;
+      
+        void main() {
+          v_uv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform vec2 resolution;
+        uniform float blurSize;
+    
+        varying vec2 v_uv;
+    
+        vec4 blur(sampler2D tex){
+          const float PI2 = 6.28318530718; // Pi*2
+        
+          // BLUR SETTINGS {{{
+          const float directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
+          const float quality = 3.0; // BLUR QUALITY (Default 3.0 - More is better but slower)
+          // BLUR SETTINGS }}}
+      
+          vec2 radius = blurSize/resolution;
+        
+          // Normalized pixel coordinates (from 0 to 1)
+          vec2 uv = gl_FragCoord.xy/resolution;
+          // Pixel colour
+          vec4 color = texture2D(tex, uv);
+        
+          // Blur calculations
+          int count = 1;
+          for( float theta=0.0; theta<PI2; theta+=PI2/directions)
+          {
+            vec2 dir = vec2(cos(theta), sin(theta)) * radius;
+            for(float i=1.0/quality; i<=1.0; i+=1.0/quality)
+            {
+              color += texture2D( tex, uv+dir*i);	
+              count++;
+            }
+          }
+        
+          color /= float(count);
+          
+          return color;
+        }
+        
+        void main (void)
+        {
+          gl_FragColor = blur(tDiffuse); 
+        }
+      `,
+    });
+
+    glslPass.renderToScreen = true;
+    composer.addPass(glslPass);
+
+    composer.setSize(window.innerWidth, window.innerHeight);
+
+    glslPass.uniforms.resolution.value
+      .set(window.innerWidth, window.innerHeight)
+      .multiplyScalar(window.devicePixelRatio);
   }
 }
