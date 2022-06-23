@@ -1,7 +1,7 @@
 import { Chapter20 } from "../../chapters";
 import { CanvasManager } from "../../utils";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { Press, Numpad } from "../../types";
+import { Press, Numpad, Arrow } from "../../types";
 import { takeEvery } from "redux-saga/effects";
 import { press } from "../../reducers";
 import * as THREE from "three";
@@ -25,6 +25,12 @@ function chapter20CommandsSaga(chapter20: Chapter20) {
         break;
       case Numpad.Numpad3:
         chapter20.setGeometry(2);
+        break;
+      case Arrow.Up:
+      case Arrow.Down:
+      case Arrow.Left:
+      case Arrow.Right:
+        chapter20.handleScaleCommand(payload);
         break;
       default:
     }
