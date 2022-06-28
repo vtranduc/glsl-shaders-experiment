@@ -1,37 +1,45 @@
 import { CanvasManager } from "../../utils";
-import * as THREE from "three";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { Numpad, Press, Special } from "../../types";
+import { takeEvery } from "redux-saga/effects";
+import { press } from "../../reducers";
+import { Chapter21 } from "../../chapters";
 
-export function chapter21Saga(controller: CanvasManager) {
-  const chapter21 = new Chapter21();
+export function* chapter21Saga(controller: CanvasManager) {
+  const dims = controller.dimensions;
+  const chapter21 = dims
+    ? new Chapter21(dims.width, dims.height)
+    : new Chapter21();
   controller.add(chapter21.scene);
   controller.requestAnimation(chapter21.updateOnAnimationFrame);
-  controller.blur();
+  controller.setBackground(chapter21.background);
+  controller.addPass(chapter21.bloomPass);
+
+  yield takeEvery(press.type, chapter21CommandsSaga(chapter21, controller));
 }
 
-class Chapter21 {
-  private box = this.createBox();
-
-  constructor() {
-    this.updateOnAnimationFrame = this.updateOnAnimationFrame.bind(this);
-  }
-
-  private createBox() {
-    const geo = new THREE.BoxGeometry(2, 2, 2);
-    const mat = new THREE.MeshPhongMaterial({
-      color: 0x0000ff,
-      shininess: 100,
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    return mesh;
-  }
-
-  public updateOnAnimationFrame() {
-    this.box.rotation.y += 0.01;
-  }
-
-  public get scene() {
-    return this.box;
-  }
+function chapter21CommandsSaga(
+  chapter21: Chapter21,
+  controller: CanvasManager
+) {
+  return function ({ payload }: PayloadAction<Press>) {
+    switch (payload) {
+      case Special.Space:
+        controller.clearPasses();
+        break;
+      case Numpad.Numpad0:
+        controller.addPass(chapter21.clearPass);
+        break;
+      case Numpad.Numpad1:
+        controller.addPass(chapter21.adaptiveToneMappingPass);
+        break;
+      case Numpad.Numpad2:
+        controller.addPass(chapter21.afterImagePass);
+        break;
+      case Numpad.Numpad3:
+        controller.addPass(chapter21.bloomPass);
+        break;
+      default:
+    }
+  };
 }
