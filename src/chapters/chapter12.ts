@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { cropSquareTexture } from "../utils";
 
 export class Chapter12 {
   private loader = new THREE.TextureLoader();
@@ -32,13 +33,13 @@ export class Chapter12 {
 
   constructor() {
     this.loader.load("piqturdrophere.jpg", (texture) => {
-      this.defaultMat.map = this.crop(texture);
+      this.defaultMat.map = cropSquareTexture(texture);
       this.defaultMat.needsUpdate = true;
     });
 
     this.loader.load(
       "tkg9ixbB9FxPyw.jpg",
-      (texture) => (this.texture = this.crop(texture))
+      (texture) => (this.texture = cropSquareTexture(texture))
     );
   }
 
@@ -95,18 +96,6 @@ export class Chapter12 {
         gl_FragColor = vec4(color, 1.0);
       }
     `;
-  }
-
-  private crop(texture: THREE.Texture) {
-    const { height, width } = texture.image;
-    if (width > height) {
-      texture.repeat.x = height / width;
-      texture.offset.x = (width - height) / (2 * width);
-    } else {
-      texture.repeat.y = width / height;
-      texture.offset.y = (height - width) / (2 * height);
-    }
-    return texture;
   }
 
   private set texture(texture: THREE.Texture) {
