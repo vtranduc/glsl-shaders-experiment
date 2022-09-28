@@ -3,7 +3,7 @@ import vertexShaderMedia from "./vertexShader.glsl";
 import fragmentShaderMedia from "./fragmentShader.glsl";
 
 export class Chapter19 {
-  private geo = new THREE.TorusKnotBufferGeometry(1, 0.5, 100, 16);
+  private geo = new THREE.TorusKnotGeometry(1, 0.5, 100, 16);
   private mat = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
   });

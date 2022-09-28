@@ -3,14 +3,14 @@ import vertexShaderMedia from "./vertexShader.glsl";
 import fragmentShaderMedia from "./fragmentShader.glsl";
 
 export class Chapter20 {
-  private torusKnot = new THREE.TorusKnotBufferGeometry(1, 0.5, 100, 16);
+  private torusKnot = new THREE.TorusKnotGeometry(1, 0.5, 100, 16);
   private sphere = new THREE.SphereGeometry(5, 30, 30);
   private box = new THREE.BoxGeometry(5, 5, 5);
   private mat = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
   });
   private mesh = new THREE.Mesh<
-    THREE.BoxGeometry | THREE.TorusKnotBufferGeometry | THREE.SphereGeometry
+    THREE.BoxGeometry | THREE.TorusKnotGeometry | THREE.SphereGeometry
   >(this.torusKnot, this.mat);
   private onCubeTextureLoaded: (cubeTexture: THREE.CubeTexture) => void;
 
